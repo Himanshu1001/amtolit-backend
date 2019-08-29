@@ -9,7 +9,8 @@ from django.urls import re_path
 from django.views.generic import TemplateView
 
 router = routers.DefaultRouter()
-router.register(r'user', views.Custom_UserViewSet)
+router.register(r'custom_user', views.Custom_UserViewSet)
+router.register(r'user', views.UserViewSet)
 router.register(r'polls', views.PollViewSet)
 router.register(r'choice', views.ChoiceViewSet)
 router.register(r'answer', views.TextAnswerViewSet)

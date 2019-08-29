@@ -46,6 +46,8 @@ class Question(CommenInfo):
         default=0,
         on_delete=models.CASCADE,
     )	
+	
+	
 	def __str__(self):
 		return self.question_text
 

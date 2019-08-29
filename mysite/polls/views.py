@@ -169,6 +169,7 @@ class PollViewSet(CommenViewSet):
     queryset = Question.objects.all()
     serializer_class = PollSerializer
 
+
 class ChoiceViewSet(CommenViewSet):
     queryset = Choice.objects.all()
     serializer_class = ChoiceSerializer
