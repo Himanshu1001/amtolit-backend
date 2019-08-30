@@ -78,30 +78,18 @@ class ValidatePhoneSendOtp(views.APIView):
                 'detail' : 'Phone Number is not given!'
             })
 
-# def send_otp(phone_number):
-#     if phone_number:
-#         key = random.randint(999,9999)
-#         api_key = "9b14b538-19c1-11e9-9ee8-0200cd936042"
-#         link = f"https://2factor.in/API/V1/{api_key}/SMS/{phone_number}/{key}"
-#         payload = ""
-#         headers = {'content-type': 'application/x-www-form-urlencoded'}
-#         response = requests.request("GET", link, data=payload, headers=headers)
-#         print (key)
-#         print(response.text)
-#         return key
-#     else :
-#         return False
-
-def send_otp(sid, key, token, sms_from, phone_number, sms_body):
+def send_otp(phone_number):
     if phone_number:
-        return requests.post('https://twilix.exotel.in/v1/Accounts/{sid}/Sms/send.json'.format(sid=sid),
-            auth=(key, token),
-            data={
-                'From': sms_from,
-                'To': sms_to,
-                'Body': sms_body
-            })
-    else:
+        key = random.randint(999,9999)
+        api_key = "9b14b538-19c1-11e9-9ee8-0200cd936042"
+        link = f"https://2factor.in/API/V1/{api_key}/SMS/{phone_number}/{key}"
+        payload = ""
+        headers = {'content-type': 'application/x-www-form-urlencoded'}
+        response = requests.request("GET", link, data=payload, headers=headers)
+        print (key)
+        print(response.text)
+        return key
+    else :
         return False
 
 class ValidateOTP(views.APIView):

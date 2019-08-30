@@ -23,7 +23,7 @@ def send_otp(phone_number):
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = User
-		fields = ('email', 'first_name', 'last_name','password','username',)
+		fields = ('email', 'first_name', 'last_name','password','username','id')
 		extra_kwargs = {'password': {'write_only': True}}
 
 	def create(self, validated_data):
