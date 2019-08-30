@@ -7,6 +7,8 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import re_path
 from django.views.generic import TemplateView
+from knox import views as knox_views
+from polls.views import LoginAPI
 
 router = routers.DefaultRouter()
 router.register(r'custom_user', views.Custom_UserViewSet)
@@ -23,5 +25,8 @@ urlpatterns = [
 	url(r'^', include(router.urls)),
     url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 	url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-	url(r'^r/', TemplateView.as_view(template_name='index.html'))
+	url(r'^r/', TemplateView.as_view(template_name='index.html')),
+    url(r'^login/', LoginAPI.as_view()),
+    url(r'^logout/', knox_views.LogoutView.as_view())
+
 ]

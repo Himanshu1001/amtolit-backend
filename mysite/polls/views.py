@@ -14,6 +14,11 @@ from django.views.decorators.csrf import csrf_exempt
 import requests
 from rest_framework import filters
 from django_filters import rest_framework as djfilters
+
+from knox.views import LoginView as KnoxLoginView
+from knox.auth import TokenAuthentication
+
+from django.contrib.auth import login
 # from google.cloud import storage
 
 
@@ -178,3 +183,13 @@ class TextAnswerViewSet(CommenViewSet):
     queryset = TextAnswer.objects.filter(approved=True)
     serializer_class = TextAnswerSerializer
     read_only_fields = ('approved',)
+
+class LoginAPI(KnoxLoginView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, format=None):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        login(request, user)
+        return super().post(request, format=None)

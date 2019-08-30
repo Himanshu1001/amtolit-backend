@@ -19,81 +19,91 @@ def refresh(obj):
 
 @api_view(['POST'])
 def token(request):
-    data = request.data
-    err = {}
-    expire = 3600*720
-    if 'clientid' not in data:
-        err['clientid'] = 'required'
-    if 'clientsecret' not in data:
-        err['clientsecret'] = 'required'
-    if 'granttype' not in data:
-        err['granttype'] = 'required'
-    if err:
-        return Response({'error/s':err},status= status.HTTP_400_BAD_REQUEST)
-    if data['granttype'] == 'password':
-        if 'username' not in data:
-            err['username'] = 'required'
-        if 'password' not in data:
-            err['password'] = 'required'
-        if 'usertype' not in data:
-            err['usertype'] = 'required'
-        else:
-            if data['usertype'] not in ('gigster','requester'):
-                err['usertype'] = 'invalid user'
-    elif data['granttype'] == 'refeshtoken':
-        if 'refreshtoken' not in data:
-            err['refreshtoken'] = 'required'
-    else:
-        return Response({'error':'unsupported grant type'})
-    if err:
-        return Response({'error/s':err},status= status.HTTP_400_BAD_REQUEST)
-    else:
-        client = Client.objects.filter(client_id = data['clientid'],client_secret = data['clientsecret'])
-        if client.exists():
-            if data['granttype'] == 'password':
-                if data['usertype'] == 'gigster':
-                    user = Gigster.objects.select_related('user__user','sub').filter(user__user__email = data['username'])
-                if data['usertype'] == 'requester':
-                    user = Requester.objects.select_related('user__user').filter(user__user__email = data['username'])
-                if not user.exists():
-                    return Response({'error':'Invalid user'},status= status.HTTP_401_UNAUTHORIZED)
-                else:
-                    user = list(user)[0]
-                auth = authenticate(username=data['username'], password=data['password'])
-                if auth:
-                    if 'sub' in request.GET and data['usertype'] == 'requester' and request.GET['sub'] !='main':
-                        if user.sub.link != request.GET['sub']:
-                            return Response({'error':'Invalid Credentials'},status=status.HTTP_401_UNAUTHORIZED)
-                    token = AuthToken(client = list(client)[0],user = user.user.user,expires = expire)
-                    token.save()
-                    return Response({
-                        'token':token.token,
-                        'refreshtoken':token.refresh_token,
-                        'expires':token.expires,
-                        'user':data['username']
-                    })
-                else:
-                    return Response({'error':'Invalid Credentials'},status=status.HTTP_401_UNAUTHORIZED)
-            elif data['granttype'] == 'refreshtoken':
-                token = AuthToken.objects.select_related('user').filter(refresh_token = data['refreshtoken'])
-                if token.exists() and not token.first().revoked:
-                    if (datetime.now - token.added).total_seconds > token.expire :
-                        return Response({'error':'time expired'},status= status.HTTP_401_UNAUTHORIZED)
-                    token = list(token)[0]
-                    refresh(token)
-                    return Response({
-                        'token':token.token,
-                        'refreshtoken':token.refresh_token,
-                        'expires':token.expires,
-                        'user':token.user.username
-                    })
-                else:
-                    err = 'invalid token'
-            else:
-                return Reponse({'error':'unsupported grant type'})
-        else:
-            err = 'invalid client'
-    return Response({'error/s':err},status= status.HTTP_400_BAD_REQUEST)
+    print('*****************')
+    print('*****************')
+    print('*****************')
+    print('*****************')
+    print('*****************')
+    print(request.data)
+
+    # return Response(request)
+   
+    
+    # data = request.data
+    # err = {}
+    # expire = 3600*720
+    # if 'clientid' not in data:
+    #     err['clientid'] = 'required'
+    # if 'clientsecret' not in data:
+    #     err['clientsecret'] = 'required'
+    # if 'granttype' not in data:
+    #     err['granttype'] = 'required'
+    # if err:
+    #     return Response({'error/s':err},status= status.HTTP_400_BAD_REQUEST)
+    # if data['granttype'] == 'password':
+    #     if 'username' not in data:
+    #         err['username'] = 'required'
+    #     if 'password' not in data:
+    #         err['password'] = 'required'
+    #     if 'usertype' not in data:
+    #         err['usertype'] = 'required'
+    #     else:
+    #         if data['usertype'] not in ('gigster','requester'):
+    #             err['usertype'] = 'invalid user'
+    # elif data['granttype'] == 'refeshtoken':
+    #     if 'refreshtoken' not in data:
+    #         err['refreshtoken'] = 'required'
+    # else:
+    #     return Response({'error':'unsupported grant type'})
+    # if err:
+    #     return Response({'error/s':err},status= status.HTTP_400_BAD_REQUEST)
+    # else:
+    #     client = Client.objects.filter(client_id = data['clientid'],client_secret = data['clientsecret'])
+    #     if client.exists():
+    #         if data['granttype'] == 'password':
+    #             if data['usertype'] == 'gigster':
+    #                 user = Gigster.objects.select_related('user__user','sub').filter(user__user__email = data['username'])
+    #             if data['usertype'] == 'requester':
+    #                 user = Requester.objects.select_related('user__user').filter(user__user__email = data['username'])
+    #             if not user.exists():
+    #                 return Response({'error':'Invalid user'},status= status.HTTP_401_UNAUTHORIZED)
+    #             else:
+    #                 user = list(user)[0]
+    #             auth = authenticate(username=data['username'], password=data['password'])
+    #             if auth:
+    #                 if 'sub' in request.GET and data['usertype'] == 'requester' and request.GET['sub'] !='main':
+    #                     if user.sub.link != request.GET['sub']:
+    #                         return Response({'error':'Invalid Credentials'},status=status.HTTP_401_UNAUTHORIZED)
+    #                 token = AuthToken(client = list(client)[0],user = user.user.user,expires = expire)
+    #                 token.save()
+    #                 return Response({
+    #                     'token':token.token,
+    #                     'refreshtoken':token.refresh_token,
+    #                     'expires':token.expires,
+    #                     'user':data['username']
+    #                 })
+    #             else:
+    #                 return Response({'error':'Invalid Credentials'},status=status.HTTP_401_UNAUTHORIZED)
+    #         elif data['granttype'] == 'refreshtoken':
+    #             token = AuthToken.objects.select_related('user').filter(refresh_token = data['refreshtoken'])
+    #             if token.exists() and not token.first().revoked:
+    #                 if (datetime.now - token.added).total_seconds > token.expire :
+    #                     return Response({'error':'time expired'},status= status.HTTP_401_UNAUTHORIZED)
+    #                 token = list(token)[0]
+    #                 refresh(token)
+    #                 return Response({
+    #                     'token':token.token,
+    #                     'refreshtoken':token.refresh_token,
+    #                     'expires':token.expires,
+    #                     'user':token.user.username
+    #                 })
+    #             else:
+    #                 err = 'invalid token'
+    #         else:
+    #             return Reponse({'error':'unsupported grant type'})
+    #     else:
+    #         err = 'invalid client'
+    # return Response({'error/s':err},status= status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

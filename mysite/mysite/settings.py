@@ -31,24 +31,22 @@ INSTALLED_APPS = [
     'webpush',
     'corsheaders',
     'django_filters',
+    'knox',
 ]
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ),
+    
    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'knox.auth.TokenAuthentication',
     ),
-    'DEFAULT_THROTTLE_CLASSES': (
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle'
-    ),
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '10000/day',
-        'user': '10000/day'
-    }
+}
+
+from datetime import timedelta
+
+REST_KNOX = {
+    'USER_SERIALIZER' : 'polls.serializers.UserSerializer',
+    'TOKEN_TTL' : timedelta(hours=24*7)
 }
 
 MIDDLEWARE = [

@@ -33,7 +33,6 @@ class Question(CommenInfo):
 	question_text = models.CharField(max_length=200)
 	pub_date = models.DateTimeField(auto_now_add=True)
 	poll_image = models.URLField()
-	background_color = models.CharField(max_length=8)
 	poll_type = models.IntegerField(choices=type_of_poll, default=0)
 	poll_orderid_1 = models.IntegerField(default=0)
 	poll_orderid_2 = models.IntegerField(default=0)

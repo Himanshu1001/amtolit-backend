@@ -4,7 +4,7 @@ from rest_framework import serializers
 from .models import *
 import random
 import datetime
-
+from django.contrib.auth import authenticate
 
 def send_otp(phone_number):
     if phone_number:
@@ -69,3 +69,43 @@ class TextAnswerSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 		
 	
+class LoginSerializer(serializers.Serializer):
+	username = serializers.CharField()
+	password = serializers.CharField(
+		style = {'input_type':'password'}, trim_whitespace=False
+	)
+
+	def validate(self, data):
+		print(data)
+		username = data.get('username')
+		password = data.get('password')
+
+		if username and password:
+			if User.objects.filter(username=username).exists():
+				print(username, password)
+				user = authenticate(request = self.context.get('request'), username=username, password=password)
+				print (user)
+
+			else :
+				msg = {
+					'detail':'Phone number not found',
+					'status': False,
+
+			}
+				raise serializers.ValidationError(msg)
+
+			if not user:
+				msg = {
+					'detail':'Phone number and password dont match',
+					'status': False,
+				}
+				raise serializers.ValidationError(msg, code='authorisation')
+		else:
+			msg = {
+				'detail':'Phone number and password not found',
+				'status': False,
+
+			}
+			raise serializers.ValidationError(msg, code='authorisation')
+		data['user'] = user
+		return data
